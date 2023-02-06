@@ -9,7 +9,6 @@ import {AiOutlineArrowRight} from 'react-icons/ai'
 import {BsFillArrowLeftCircleFill,BsFillArrowRightCircleFill} from 'react-icons/bs'
 import {BsHeart,BsFillHeartFill,BsStarFill,BsFillArrowRightSquareFill} from 'react-icons/bs'
 
-
 const App = () => {
   const [movies,setMovies] = useState([]);
   const [likedmovies,setLikedMovies] = useState([]);
@@ -28,7 +27,7 @@ const App = () => {
     getMovies().then((d)=>{
       updateIfLiked(d);
     })
- 
+
     
   },[])
 
