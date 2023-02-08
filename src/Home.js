@@ -2,14 +2,20 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import {v4 as uuid} from 'uuid';
-import "./index.css";
+import "./home.css";
 import logo from '../src/logo.svg'
 import {FcLike} from 'react-icons/fc'
 import {AiOutlineArrowRight} from 'react-icons/ai'
 import {BsFillArrowLeftCircleFill,BsFillArrowRightCircleFill} from 'react-icons/bs'
 import {BsHeart,BsFillHeartFill,BsStarFill,BsFillArrowRightSquareFill} from 'react-icons/bs'
 
-const App = () => {
+
+import {
+    BrowserRouter as Router,
+    Link
+  } from "react-router-dom";
+
+const Home = () => {
   const [movies,setMovies] = useState([]);
   const [likedmovies,setLikedMovies] = useState([]);
   const [showmovies,setShowmovies] = useState(movies);
@@ -27,8 +33,7 @@ const App = () => {
     getMovies().then((d)=>{
       updateIfLiked(d);
     })
-
-    
+ 
   },[])
 
   const updateIfLiked = (d) => {
@@ -55,9 +60,7 @@ const App = () => {
     setPage(1);
     getMovies(page,year);
   },[year])
-  // useEffect(() => {
-  //   getMovies();
-  // },[search])
+
 
   useEffect(() => {
     if(movies===undefined) return;
@@ -78,13 +81,10 @@ const App = () => {
       if(search.length>2){
         moviesRequested=await axios.get(`https://www.omdbapi.com/?s=${search}&page=${page}&y=${year}&apikey=f6d8a7ec`)
       }else{
-        // if(page<=0) setPage(1);
-        // if (page <= 10) {
-          // if(year!=="") setPage(1);
+  
           console.log("year = "+ year+ "page =" + page);
           moviesRequested=await axios.get(`https://www.omdbapi.com/?s=harry&page=${page}&y=${year}&apikey=f6d8a7ec`)
-          // setPage(page+1);
-      // }
+   
       }
       // console.log(moviesRequested.data)
       setMovies(moviesRequested.data.Search)
@@ -116,39 +116,7 @@ const App = () => {
     }
   }
 
-  
-
-
-  const markLiked = (id) => {
-    let liked;
-    setShowmovies(
-      showmovies.map(m => {
-        if(m.id==id){
-          m.liked = !m.liked;
-          liked = m;
-        }
-        return m;
-      })
-    )
-
-
-    if(likedmovies.includes(liked)){
-      // console.log(liked);
-      let idx = likedmovies.indexOf(liked);
-      if(idx>-1){
-        likedmovies.splice(idx,1);
-      }
-    }else{
-      console.log(liked)
-      likedmovies.push(liked);
-    }
-
-
-    localStorage.setItem('key', JSON.stringify(likedmovies));
-
-
-
-  }
+ 
 
   const filterYear = (e) => {
     setYear(e.target.value)
@@ -156,6 +124,9 @@ const App = () => {
 
 
   return(
+    // <Router>
+
+    
     <div className="container">
       <div className="navbar">
         <img src={logo} alt="" />
@@ -178,7 +149,9 @@ const App = () => {
        })
      }
     </select>
-        <FcLike className="liked" />
+       <Link to="liked-movies">
+
+        <FcLike className="liked" /></Link>
       </div>
       
       <div className="movies-container">
@@ -189,19 +162,14 @@ const App = () => {
           showmovies.map((m)=>{
             return(
               <div className="movie-item">
+                <Link to={`${m.imdbID}`}>
                 {m.Poster==="N/A"?(
                   <div className="img-not-found">Poster Not Available</div>
                 ):(
 
                   <img src={m.Poster} alt="" />
-                )}
+                )}</Link>
               <p>{m.Title}</p>
-                {/* <BsStarFill/>
-                {m.liked?(
-              <BsFillHeartFill className='isLiked' onClick={()=>markLiked(m.id)}/>
-              ):(
-              <BsHeart className='not-liked' onClick={()=>markLiked(m.id)}/>
-              )} */}
               </div>
             )
           })
@@ -226,5 +194,5 @@ const App = () => {
     </div>
   )
 };
-
-ReactDOM.render(<App />, document.getElementById("root"));
+export default Home;
+// ReactDOM.render(<App />, document.getElementById("root"));
